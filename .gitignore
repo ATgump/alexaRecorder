@@ -3,3 +3,4 @@ alexaRecordEnv/
 __pycache__
 creds.json
 log_entries.txt
+.gitignore
