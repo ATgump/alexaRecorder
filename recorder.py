@@ -24,8 +24,10 @@ for data_folder in experiment_audio_folder:
                 playsound(audio_data_path+"\\"+data_folder+"\\"+audio_file)
             except:
                 print("file: "+audio_file+" couldnt be played was deleted.")
+                os.remove("C:\\Users\\avery\\Documents\\fixed_tess\\"+data_folder+"\\"+audioName+".wav")
                 with open ("C:\\Users\\avery\\OneDrive\\Desktop\\CORRUPTED FILES.txt",'a+') as f:
                     f.write("\n"+audioName)
+                break
             time.sleep(20)
             try:
                 code,transcript = scrapeAudio(audioName)

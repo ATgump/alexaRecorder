@@ -3,3 +3,5 @@ alexaRecordEnv/
 __pycache__
 creds.json
 log_entries.txt
+transcription.py
+vosk-model-small-en-us-0.15
