@@ -5,8 +5,16 @@ import os
 import time
 import soundfile as sf
 import sys
-volumes = ["61440","53248","45056","32768"]
-audio_data_path = "C:\\Users\\avery\\Documents\\aaps_for_avery"
+# When I play these, I play at 5 different loudness using the following command to set the loudness:
+#             amixer -D pulse cset name='Master Playback Volume' <VALUE>
+# with the following values:
+#    65536
+#    61440
+#    53248
+#    45056
+#    32768
+volumes = ["65536","61440","53248","45056","32768"]
+audio_data_path = "C:\\Users\\avery\\Documents\\padded_aaps_for_avery"
 alexa_open_prompt = "C:\\Users\\avery\\OneDrive\\Desktop\\echo_open_tones.wav"
 for volume in volumes:
     os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume)
@@ -32,11 +40,11 @@ for volume in volumes:
                     i = i+1
                     continue
                 elif (code == 10):
-                    recoding_audio= sf.SoundFile("C:\\Users\\avery\\Documents\\alexa_recorded_tones\\"+audioName+".wav")
+                    recoding_audio= sf.SoundFile("C:\\Users\\avery\\Documents\\alexa_recorded_tones_set2_padded\\"+audioName+".wav")
                     length_of_recorder = recoding_audio.frames/recoding_audio.samplerate
                     recoding_audio.close()
                     if (4 - length_of_recorder) > 0 or (4-length_of_recorder) < -2:
-                        os.remove("C:\\Users\\avery\\Documents\\alexa_recorded_tones\\"+audioName+".wav")
+                        os.remove("C:\\Users\\avery\\Documents\\alexa_recorded_tones_set2_padded\\"+audioName+".wav")
                         i = i+1
                         continue
                     break
@@ -44,7 +52,7 @@ for volume in volumes:
                 print("scraper didnt return 225 exception line 41")
                 i=i+1
                 try:
-                    os.remove("C:\\Users\\avery\\Documents\\alexa_recorded_tones\\"+audioName+".wav")
+                    os.remove("C:\\Users\\avery\\Documents\\alexa_recorded_tones_set2_padded\\"+audioName+".wav")
                 except:
                     pass
                 continue

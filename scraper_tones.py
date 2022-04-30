@@ -119,6 +119,7 @@ def scrapeAudio(name,volume):
     time.sleep(4)
     delAudio(driver)
     driver.quit()
+    time.sleep(2)
     os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume)
     transcript = transcript[1:-1]
     return (10,trans_out)
