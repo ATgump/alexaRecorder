@@ -50,6 +50,8 @@ def scrapeAudio(name,volume):
         capabilities["goog:loggingPrefs"] = {"performance": "ALL"}
         option.add_argument("user-data-dir=C:\\Users\\avery\\AppData\\Local\\Google\\Chrome\\User Data")
         option.add_argument("profile-directory=Profile 1")
+        option.add_argument("exit_type=Normal")
+        option.add_argument("exited_cleanly=true")
         option.add_experimental_option("detach",True)
         driver = webdriver.Chrome(service=service_object,options=option,desired_capabilities=capabilities)
         time.sleep(2)
@@ -57,6 +59,9 @@ def scrapeAudio(name,volume):
         time.sleep(8)
         os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume 0")
         time.sleep(2)
+        pyautogui.press("volumemute")
+        time.sleep(2)
+
         boxes = driver.find_elements_by_class_name("apd-content-box")
     except:
         print("driver failed to load history or content box not found")
@@ -103,6 +108,9 @@ def scrapeAudio(name,volume):
         time.sleep(2)
         print("error 225")
         os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume)
+        time.sleep(2)
+        pyautogui.press("volumemute")
+        time.sleep(2)
         return (225,transcript)       
     driver.execute_script("window.open('');")
     driver.switch_to.window(driver.window_handles[1])
@@ -121,6 +129,9 @@ def scrapeAudio(name,volume):
     driver.quit()
     time.sleep(2)
     os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume)
+    time.sleep(2)
+    pyautogui.press("volumemute")
+    time.sleep(2)
     transcript = transcript[1:-1]
     return (10,trans_out)
 

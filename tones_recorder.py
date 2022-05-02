@@ -4,6 +4,8 @@ from scraper_tones import scrapeAudio
 import os
 import time
 import soundfile as sf
+from pydub import AudioSegment
+from pydub.playback import play
 import sys
 # When I play these, I play at 5 different loudness using the following command to set the loudness:
 #             amixer -D pulse cset name='Master Playback Volume' <VALUE>
@@ -13,8 +15,8 @@ import sys
 #    53248
 #    45056
 #    32768
-volumes = ["65536","61440","53248","45056","32768"]
-audio_data_path = "C:\\Users\\avery\\Documents\\padded_aaps_for_avery"
+volumes = ["65536","16384"]
+audio_data_path = "C:\\Users\\avery\\OneDrive\\Desktop\\test\\test_tones_padded" ##TEST FOLDER
 alexa_open_prompt = "C:\\Users\\avery\\OneDrive\\Desktop\\echo_open_tones.wav"
 for volume in volumes:
     os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume)
@@ -25,6 +27,10 @@ for volume in volumes:
             if (i == 10):
                 sys.exit("10 try fails")
             try:
+                # open_seg = AudioSegment.from_wav(alexa_open_prompt)
+                # play(open_seg)
+                # audio_clip = AudioSegment.from_wav(audio_data_path+"\\"+audio_file)
+                # play(audio_clip)
                 playsound(alexa_open_prompt)
                 playsound(audio_data_path+"\\"+audio_file)
             except:
@@ -40,11 +46,11 @@ for volume in volumes:
                     i = i+1
                     continue
                 elif (code == 10):
-                    recoding_audio= sf.SoundFile("C:\\Users\\avery\\Documents\\alexa_recorded_tones_set2_padded\\"+audioName+".wav")
+                    recoding_audio= sf.SoundFile(audio_data_path+"\\"+audio_file)
                     length_of_recorder = recoding_audio.frames/recoding_audio.samplerate
                     recoding_audio.close()
                     if (4 - length_of_recorder) > 0 or (4-length_of_recorder) < -2:
-                        os.remove("C:\\Users\\avery\\Documents\\alexa_recorded_tones_set2_padded\\"+audioName+".wav")
+                        os.remove(audio_data_path+"\\"+audio_file)
                         i = i+1
                         continue
                     break
@@ -52,7 +58,7 @@ for volume in volumes:
                 print("scraper didnt return 225 exception line 41")
                 i=i+1
                 try:
-                    os.remove("C:\\Users\\avery\\Documents\\alexa_recorded_tones_set2_padded\\"+audioName+".wav")
+                    os.remove(audio_data_path+"\\"+audio_file)
                 except:
                     pass
                 continue
