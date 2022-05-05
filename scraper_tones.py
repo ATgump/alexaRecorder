@@ -71,7 +71,18 @@ def scrapeAudio(name,volume):
             pass
         return 225
     audio_url = "didnt get updated"
-    j = 0
+    number_of_ts = 0
+    for box in boxes:
+        try:
+            transcript = box.find_element_by_class_name("record-summary-preview.data-warning-message").text
+            if transcript.startswith("Audio"):
+                number_of_ts = number_of_ts+1
+        except:
+            continue
+    if number_of_ts == 2:
+        j = 0
+    elif number_of_ts == 1:
+        j=1
     for box in boxes:
         try:
             transcript = box.find_element_by_class_name("record-summary-preview.data-warning-message").text

@@ -33,7 +33,7 @@ def trim_time(clip):
     while i < ztwo.shape[0]:
         j=0
         while j < ztwo.shape[1]:
-            if (f[i] > 2500 and f[i] < 3500) and ztwo[i][j] > 25000:
+            if f[i] > 2800 and f[i] < 3200 and ztwo[i][j] > 3000:
                 times.append(t[j])
             j = j+1
         i = i+1
@@ -82,7 +82,7 @@ def trim_time_data(clip):
     while i < ztwo.shape[0]:
         j=0
         while j < ztwo.shape[1]:
-            if f[i] > 2000 and ztwo[i][j] > 25000:
+            if f[i] > 2800 and f[i] < 3200 and ztwo[i][j] > 3000:
                 times.append((t[j],ztwo[i][j],f[i]))
             j = j+1
         i = i+1
@@ -97,18 +97,7 @@ def trim_time_data(clip):
         if ti < mi:
             mi = ti
             mint = (ti,a,fr)
-    # found = False
-    # for (ti,a,fr) in sort_times:
-    #     if ti == mi:
-    #         found = True
-    #     time2 = []
-    #     if found and (a <2900 or a>3100):
-    #         break
-    #     else:
-    #         time2.append(ti) 
-    #keep_going = True
-    #i = 0
-    #found = False
+   
     for (ti,a,fr) in times:
         if a > max_amp[1] and ti == mi:
             max_amp = (ti,a,fr)
@@ -125,14 +114,14 @@ def trim_time_data(clip):
 def trim_clip(clip_path, export_path):
     tt =trim_time(clip_path)
     to_trim = pydub.AudioSegment.from_file(clip_path, format="wav")
-    clip = (tt*1000)+500
-    over = clip+4000 - to_trim.duration_seconds*1000
-    if over > 0:
-        clip = clip-over
-        to_trim = to_trim[clip:clip+4000]
-        to_trim.export(export_path, format="wav")
-    else:
-        to_trim = to_trim[clip:clip+4000]
-        to_trim.export(export_path, format="wav")
+    clip = (tt*1000)+200
+    # over = clip+4000 - to_trim.duration_seconds*1000
+    # if over > 0:
+    #     clip = clip-over
+    #     to_trim = to_trim[clip:clip+4000]
+    #     to_trim.export(export_path, format="wav")
+        # else:
+    to_trim = to_trim[clip:clip+4000]
+    to_trim.export(export_path, format="wav")
     return 0
 
