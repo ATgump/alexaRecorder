@@ -41,7 +41,7 @@ def delAudio(drive):
 
 
 
-def scrapeAudio(name,volume):
+def scrapeAudio_tones(name,volume):
     try:
         transcript = "audio not found"
         service_object = Service(binary_path)
@@ -57,7 +57,7 @@ def scrapeAudio(name,volume):
         time.sleep(2)
         driver.get("https://www.amazon.com/alexa-privacy/apd/rvh?")
         time.sleep(8)
-        os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume 0")
+        #os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume 0")
         time.sleep(2)
         pyautogui.press("volumemute")
         time.sleep(2)
@@ -118,7 +118,7 @@ def scrapeAudio(name,volume):
         driver.quit()
         time.sleep(2)
         print("error 225")
-        os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume)
+        #os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume)
         time.sleep(2)
         pyautogui.press("volumemute")
         time.sleep(2)
@@ -139,7 +139,7 @@ def scrapeAudio(name,volume):
     delAudio(driver)
     driver.quit()
     time.sleep(2)
-    os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume)
+    #os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume)
     time.sleep(2)
     pyautogui.press("volumemute")
     time.sleep(2)
