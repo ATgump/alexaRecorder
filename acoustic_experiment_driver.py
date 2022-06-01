@@ -16,9 +16,12 @@ devices = [('"Speakers"',"2"),('"Headphones"',"0")] ### 0 - USB, 1- Bluetooth
 AAPS_to_test = [("655","ae_PURE_trial_3_candidate_8.wav"),("9831","ae_MSE_trial_3_candidate_5.wav"),("655","ae_MSE-FFT_trial_3_candidate_3.wav")]
 alexa_open_prompt_tone_skill = "C:\\Users\\avery\\OneDrive\\Desktop\\echo_open_tones.wav"
 alexa_open_prompt_tess_skill = "C:\\Users\\avery\\OneDrive\\Desktop\\echoOpen.wav"
-export_path = "C:\\Users\\avery\\OneDrive\\Documents\\acoustic_experiment_alexa_recordings"
-transcript_folder = "C:\\Users\\avery\\OneDrive\\Documents\\acoustic_experiment_alexa_recordings\\Transcripts"
-usb_mic_export_path = "C:\\Users\\avery\\OneDrive\\Documents\\acoustic_experiment_USB_recordings"
+#export_path = "C:\\Users\\avery\\OneDrive\\Documents\\acoustic_experiment_alexa_recordings"
+#transcript_folder = "C:\\Users\\avery\\OneDrive\\Documents\\acoustic_experiment_alexa_recordings\\Transcripts"
+transcript_folder = "C:\\Users\\avery\\OneDrive\\Documents\\new_trials_5_20_22\\Alexa - Recordings\\Transcripts"
+#usb_mic_export_path = "C:\\Users\\avery\\OneDrive\\Documents\\acoustic_experiment_USB_recordings"
+export_path = "C:\\Users\\avery\\OneDrive\\Documents\\new_trials_5_20_22\\Alexa - Recordings"
+usb_mic_export_path= "C:\\Users\\avery\\OneDrive\\Documents\\new_trials_5_20_22\\USB - Recordings"
 
 volume_sets =[]
 for AAP in AAPS_to_test:
