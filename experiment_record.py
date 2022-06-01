@@ -219,6 +219,7 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
         except:
             pass
         for volume in file_list:
+            ## CHANGE THIS TO CHANGE VOLUME FOR THE RIGHT DEVICE
             os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume+' "Speakers" '+"2")
             if method == "USB_record_tones":
                 sd.default.device = ("Microphone (USB audio CODEC), Windows DirectSound","Speakers (USB Audio), Windows DirectSound")
