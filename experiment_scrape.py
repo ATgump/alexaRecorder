@@ -108,6 +108,7 @@ def experiment_scrape(scrape_type = None,name = "", index = 0):
                     collapse_button = box.find_element_by_class_name("apd-expand-toggle-button.button-clear.fa.fa-chevron-up")
                     collapse_button.click()
                     randSleepTime(2,6)
+                    break
             except:
                 continue
 

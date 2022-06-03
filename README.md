@@ -12,6 +12,7 @@ Things still to do:
     2. remove unecessary requirments
     3. Cleanup scraper (redundant code here still)
     4. update alexa_record_tones to include recording for tones with a marker (files needed for this in find_marker.py)
+    5. add a "checker" function where given a list of expected files that were recorded, check appropriate folders to make sure this is the case and checks the folder to make sure there arent extraneous files (for now just print them, maybe change to delete)
 ## Method: alexa_record_tones
     1. method: "alexa_record_tones"
     2. file list: (tone_files[], volume[]) record all tone files at every volume (files are just filenames not paths)

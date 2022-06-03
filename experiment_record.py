@@ -12,7 +12,7 @@ import threading
 fixed_tess_path = "C:\\Users\\avery\\OneDrive\\Documents\\fixed_tess\\fixed_tess" ## For recording the trials, in case the tess is the rerecorded version
 alexa_open_prompt_tones = "C:\\Users\\avery\\OneDrive\\Desktop\\echo_open_tones.wav"
 alexa_open_prompt_tess = "C:\\Users\\avery\\OneDrive\\Desktop\\echoOpen.wav"
-devices = [('"Speakers"',"2"),('"Headphones"',"0")] ### 0 - USB, 1- Bluetooth
+devices = [('"Speakers"',"3"),('"Headphones"',"0")] ### 0 - USB, 1- Bluetooth
 alexa_record_path = "C:\\Users\\avery\\OneDrive\\Documents\\alexa_recording_fixed"
 
 
@@ -288,13 +288,18 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
                         except:
                             print("file: "+audio_file+" couldnt be played.")
                             break
-                        time.sleep(20)
+                        time.sleep(40)
                         try:
                             code,transcript = experiment_scrape(name = audio_name,scrape_type="TESS")
                             if (code == 225):
                                 i = i+1
                                 continue
                             elif (code == 10):
+                                try:
+                                    os.rename(os.path.join(alexa_record_path,(audio_name+".wav")),os.path.join(alexa_export_path,(audio_name+".wav")))
+                                except:
+                                    print("failed to move file")
+                                    pass
                                 tess_audio = sf.SoundFile(os.path.join(fixed_tess_path,actor,audio_file))
                                 recoding_audio= sf.SoundFile(os.path.join(alexa_export_path,audio_name+".wav"))
                                 length_of_tess = tess_audio.frames/tess_audio.samplerate
@@ -308,10 +313,6 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
                                     continue
                                 with open(os.path.join(transcript_folder,audio_name+".txt"),'w') as f:
                                     f.write(transcript)
-                                try:
-                                    os.rename(os.path.join(alexa_record_path,audio_file),os.path.join(alexa_export_path,audio_file))
-                                except:
-                                    pass
                                 break
                         except:
                             print("scraper didnt return 225 - some other exception")
@@ -333,13 +334,17 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
                         except:
                             print("file: "+audio_file+" couldnt be played.")
                             break
-                        time.sleep(20)
+                        time.sleep(40)
                         try:
                             code,transcript =  experiment_scrape(name = audio_name,scrape_type="index")
                             if (code == 225):
                                 i = i+1
                                 continue
                             elif (code == 10):
+                                try:
+                                    os.rename(os.path.join(alexa_record_path,(audio_name+".wav")),os.path.join(alexa_export_path,(audio_name+".wav")))
+                                except:
+                                    pass
                                 try:
                                     recoding_audio = sf.SoundFile(os.path.join(alexa_export_path,audio_name+".wav"))
                                 except:
@@ -357,10 +362,6 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
                                     os.remove(os.path.join(usb_mic_export_path,audio_name+".wav"))
                                     i = i+1
                                     continue
-                                try:
-                                    os.rename(os.path.join(alexa_record_path,audio_file),os.path.join(alexa_export_path,audio_file))
-                                except:
-                                    pass
                                 break
                         except:
                             print("scraper didnt return 225 exception line 41")

@@ -346,40 +346,44 @@ import os
 
 trial_1_tess = "C:\\Users\\avery\\OneDrive\\Documents\\trial1"
 trial_2_tess = "C:\\Users\\avery\\OneDrive\\Documents\\trial2"
-export_path1 = "C:\\Users\\avery\\OneDrive\\Documents\\trial_1_eval_different_distances\\2feet"
-export_path2 = "C:\\Users\\avery\\OneDrive\\Documents\\trial_1_eval_different_distances\\3feet"
-export_path3 = "C:\\Users\\avery\\OneDrive\\Documents\\trial_2_eval"
+trial_3_tess = "C:\\Users\\avery\\OneDrive\\Documents\\trial3"
+#export_path1 = "C:\\Users\\avery\\OneDrive\\Documents\\trial_1_eval_different_distances\\2feet"
+#export_path2 = "C:\\Users\\avery\\OneDrive\\Documents\\trial_1_eval_different_distances\\3feet"
+export_path = "C:\\Users\\avery\\OneDrive\\Documents\\trial_3_eval\\2feet"
 tess_imports = dict()
-AAPS_to_test = [("655","trial_1_individual_15_ae_MSE-FFT.wav",2)]
-AAP_path = "C:\\Users\\avery\\OneDrive\\Documents\\avery_new_ae"
+
+AAPS_to_test = [("655","trial2_ae_MSE-FFT_individual_14.wav",3)]
+#AAP_path = "C:\\Users\\avery\\OneDrive\\Documents\\avery_new_ae"
+AAP_path = "C:\\Users\\avery\\OneDrive\\Documents\\trial3_aaps"
 tess_imports["trial1"] = trial_1_tess
 tess_imports["trial2"] = trial_2_tess
+tess_imports["trial3"] = trial_3_tess
 
-trial1_files = os.listdir(os.path.join(trial_1_tess,"Actor_026"))+os.listdir(os.path.join(trial_1_tess,"Actor_028"))
-trial2_files = os.listdir(os.path.join(trial_2_tess,"Actor_026"))+os.listdir(os.path.join(trial_2_tess,"Actor_028"))
-trial1_names = []
-trial2_names = []
+# trial1_files = os.listdir(os.path.join(trial_1_tess,"Actor_026"))+os.listdir(os.path.join(trial_1_tess,"Actor_028"))
+# trial2_files = os.listdir(os.path.join(trial_2_tess,"Actor_026"))+os.listdir(os.path.join(trial_2_tess,"Actor_028"))
+# trial1_names = []
+# trial2_names = []
 
-for file in trial1_files:
-    audio_name = "trial1"+"_"+"trial_0_individual_13_ae_MSE-FFT"+"_"+"655"+"_"+file
-    trial1_names.append(audio_name)
+# for file in trial1_files:
+#     audio_name = "trial1"+"_"+"trial_0_individual_13_ae_MSE-FFT"+"_"+"655"+"_"+file
+#     trial1_names.append(audio_name)
 
-for file in trial2_files:
-    audio_name = "trial2"+"_"+"trial_1_individual_15_ae_MSE-FFT"+"_"+"655"+"_"+file
-    trial2_names.append(audio_name)
+# for file in trial2_files:
+#     audio_name = "trial2"+"_"+"trial_1_individual_15_ae_MSE-FFT"+"_"+"655"+"_"+file
+#     trial2_names.append(audio_name)
 
 
-transcripts1 = os.listdir(os.path.join(export_path1,"trial1","Alexa","transcripts"))
-usb1 = os.listdir(os.path.join(export_path1,"trial1","USB"))
-Alexa1 = os.listdir(os.path.join(export_path1,"trial1","Alexa"))
+# transcripts1 = os.listdir(os.path.join(export_path1,"trial1","Alexa","transcripts"))
+# usb1 = os.listdir(os.path.join(export_path1,"trial1","USB"))
+# Alexa1 = os.listdir(os.path.join(export_path1,"trial1","Alexa"))
 
-transcripts2 = os.listdir(os.path.join(export_path2,"trial1","Alexa","transcripts"))
-usb2 = os.listdir(os.path.join(export_path2,"trial1","USB"))
-Alexa2 = os.listdir(os.path.join(export_path2,"trial1","Alexa"))
+# transcripts2 = os.listdir(os.path.join(export_path2,"trial1","Alexa","transcripts"))
+# usb2 = os.listdir(os.path.join(export_path2,"trial1","USB"))
+# Alexa2 = os.listdir(os.path.join(export_path2,"trial1","Alexa"))
 
-transcripts3 = os.listdir(os.path.join(export_path3,"trial2","Alexa","transcripts"))
-usb3 = os.listdir(os.path.join(export_path3,"trial2","USB"))
-Alexa3 = os.listdir(os.path.join(export_path3,"trial2","Alexa"))
+# transcripts3 = os.listdir(os.path.join(export_path3,"trial2","Alexa","transcripts"))
+# usb3 = os.listdir(os.path.join(export_path3,"trial2","USB"))
+# Alexa3 = os.listdir(os.path.join(export_path3,"trial2","Alexa"))
 
 # print(trial1_names[0])
 # print(trial2_names[0])
@@ -388,32 +392,32 @@ Alexa3 = os.listdir(os.path.join(export_path3,"trial2","Alexa"))
 #print(len(trial1_files))
 #print(len(trial2_files))
 
-for file in trial1_names:
-    if file not in usb1 or file not in usb2 or file not in Alexa1 or file not in Alexa2:
-        print(file)
-    if (file[:-4]+".txt") not in transcripts1 or (file[:-4]+".txt") not in transcripts2:
-        print(file)
+# for file in trial1_names:
+#     if file not in usb1 or file not in usb2 or file not in Alexa1 or file not in Alexa2:
+#         print(file)
+#     if (file[:-4]+".txt") not in transcripts1 or (file[:-4]+".txt") not in transcripts2:
+#         print(file)
 
-for file in trial2_names:
-    if file not in usb3 or file not in Alexa3:
-        print(file)
-    if (file[:-4]+".txt") not in transcripts3:
-        print(file)
+# for file in trial2_names:
+#     if file not in usb3 or file not in Alexa3:
+#         print(file)
+#     if (file[:-4]+".txt") not in transcripts3:
+#         print(file)
 
-for testing in [usb1,usb2,transcripts1,transcripts2,Alexa1,Alexa2]:
-    for file in testing:
-        if testing == transcripts1 or testing == transcripts2:
-            file = (file[:-4]+".wav")
-        if file not in trial1_names:
-            print(file)
+# for testing in [usb1,usb2,transcripts1,transcripts2,Alexa1,Alexa2]:
+#     for file in testing:
+#         if testing == transcripts1 or testing == transcripts2:
+#             file = (file[:-4]+".wav")
+#         if file not in trial1_names:
+#             print(file)
 
-for testing in [usb3,transcripts3,Alexa3]:
-    for file in testing:
-        if testing == transcripts3:
-            file = (file[:-4]+".wav")
-        if file not in trial2_names:
-            print(file)
+# for testing in [usb3,transcripts3,Alexa3]:
+#     for file in testing:
+#         if testing == transcripts3:
+#             file = (file[:-4]+".wav")
+#         if file not in trial2_names:
+#             print(file)
 
-print("success")
-#experiment_record(method = "eval_record", import_directory_TESS=tess_imports,import_directory_tones=AAP_path,export_directory=export_path,file_list=AAPS_to_test)
+# print("success")
+experiment_record(method = "eval_record", import_directory_TESS=tess_imports,import_directory_tones=AAP_path,export_directory=export_path,file_list=AAPS_to_test)
 
