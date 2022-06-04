@@ -12,7 +12,7 @@ import threading
 fixed_tess_path = "C:\\Users\\avery\\OneDrive\\Documents\\fixed_tess\\fixed_tess" ## For recording the trials, in case the tess is the rerecorded version
 alexa_open_prompt_tones = "C:\\Users\\avery\\OneDrive\\Desktop\\echo_open_tones.wav"
 alexa_open_prompt_tess = "C:\\Users\\avery\\OneDrive\\Desktop\\echoOpen.wav"
-devices = [('"Speakers"',"3"),('"Headphones"',"0")] ### 0 - USB, 1- Bluetooth
+devices = [('"Speakers"',"2"),('"Headphones"',"0")] ### 0 - USB, 1- Bluetooth
 alexa_record_path = "C:\\Users\\avery\\OneDrive\\Documents\\alexa_recording_fixed"
 
 

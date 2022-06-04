@@ -342,14 +342,14 @@
 from experiment_record import experiment_record
 import time
 import os
-#time.sleep(20)
+time.sleep(20)
 
 trial_1_tess = "C:\\Users\\avery\\OneDrive\\Documents\\trial1"
 trial_2_tess = "C:\\Users\\avery\\OneDrive\\Documents\\trial2"
 trial_3_tess = "C:\\Users\\avery\\OneDrive\\Documents\\trial3"
 #export_path1 = "C:\\Users\\avery\\OneDrive\\Documents\\trial_1_eval_different_distances\\2feet"
 #export_path2 = "C:\\Users\\avery\\OneDrive\\Documents\\trial_1_eval_different_distances\\3feet"
-export_path = "C:\\Users\\avery\\OneDrive\\Documents\\trial_3_eval\\2feet"
+export_path = "C:\\Users\\avery\\OneDrive\\Documents\\trial_3_eval\\1feet"
 tess_imports = dict()
 
 AAPS_to_test = [("655","trial2_ae_MSE-FFT_individual_14.wav",3)]
