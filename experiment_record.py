@@ -12,7 +12,7 @@ import threading
 fixed_tess_path = "C:\\Users\\avery\\OneDrive\\Documents\\fixed_tess\\fixed_tess" ## For recording the trials, in case the tess is the rerecorded version
 alexa_open_prompt_tones = "C:\\Users\\avery\\OneDrive\\Desktop\\echo_open_tones.wav"
 alexa_open_prompt_tess = "C:\\Users\\avery\\OneDrive\\Desktop\\echoOpen.wav"
-devices = [('"Speakers"',"2"),('"Headphones"',"0")] ### 0 - USB, 1- Bluetooth
+#devices = [('"Speakers"',"2"),('"Headphones"',"0")] ### 0 - USB, 1- Bluetooth
 alexa_record_path = "C:\\Users\\avery\\OneDrive\\Documents\\alexa_recording_fixed"
 
 
@@ -81,6 +81,7 @@ def make_threads(tone_path,tess_path,name,usb_ep):
 def create_volume_sets(tess_import,export_path,AAPS):
     volume_sets =[]
     for AAP in AAPS:
+        #print(AAP)
         trial_num = "trial"+str(AAP[2])
         to_do = []
         for actor in os.listdir(os.path.join(tess_import[trial_num])):
@@ -88,8 +89,9 @@ def create_volume_sets(tess_import,export_path,AAPS):
                 audio_name = trial_num+"_"+AAP[1][:-4]+"_"+AAP[0]+"_"+audio
                 if audio_name not in os.listdir(os.path.join(export_path,trial_num,"Alexa")):
                     to_do.append((audio,AAP[0],AAP[1],AAP[2]))
-        volume_sets.append((AAP[0],to_do))
-        return volume_sets
+        if to_do:
+            volume_sets.append((AAP[0],to_do))
+    return volume_sets
 
 
 
@@ -107,6 +109,7 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
     ## export directory: directory for exporting  
     if method == "alexa_record_tones":
         for volume in file_list[1]:
+            ##### CHANGE TO TONES SPEAKER DEVICE INSTEAD OF DEFAULT
             os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume)
             for audio_file in file_list[0]:
                 if audio_file not in os.listdir(export_directory):
@@ -158,7 +161,7 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
             os.makedirs(export_directory,"transcripts")
         except:
             pass
-        os.system('C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume '+file_list[1]+' "Headphones" 0')
+        os.system('C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume '+file_list[1]+' "Baby Boom XL\\Subunit\\Volume"')
         for audio_file in file_list[0]:
             i = 0
             actor = audio_file[-7:-4]
@@ -252,7 +255,7 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
 ## import_directory_tess is multiple tess directories for different trials dicts d["trial1"] = trial 1 import directory
 
     elif method == "eval_record":
-        os.system('C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume 64226 "Headphones" 0')
+        #os.system('C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume 64226 "Baby Boom XL\\Subunit\\Volume"')
         for trial in file_list:
             trial_num = "trial"+str(trial[2])
             try:
@@ -261,25 +264,31 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
             except:
                 pass
         volume_sets = create_volume_sets(import_directory_TESS,export_directory,file_list)
+        #print(volume_sets)
         for volume_set in volume_sets:
-            #print("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume_set[0]+" "+devices[0][0]+" "+devices[0][1])
-            os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume_set[0]+" "+devices[0][0]+" "+devices[0][1])
+            #print("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume_set[0]+' "USB Audio\\Subunit\\Speakers"')
+            #os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume_set[0]+' "USB Audio\\Subunit\\Speakers"')
             time.sleep(2)
             new_export = os.path.join(export_directory,("trial"+str(volume_set[1][0][3])))
             alexa_export_path = os.path.join(new_export,"Alexa")
             usb_mic_export_path = os.path.join(new_export,"USB")
             transcript_folder = os.path.join(alexa_export_path,"transcripts")
+            missed_files = 0
             for combo in volume_set[1]:
                 i = 0
                 audio_file = combo[0]
                 actor = "Actor_" + combo[0][-7:-4]
                 while True:
                     audio_name = "trial"+str(combo[3])+"_"+combo[2][:-4]+"_"+combo[1]+"_"+audio_file[:-4]
-                    if(i == 10):
+                    if(i == 3):
+                        missed_files = missed_files+1
+                        if missed_files == 5:
+                            print("TOO MANY FILES MISSED QUIT")
+                            sys.exit("Too many files missed reset the echo")
                         break
 
                     ## TRY THIS METHOD FIRST (BETTER TRIM ON FILES)
-                    if(i<5):
+                    if(i<3):
                         try:
                             d,f = librosa.load(alexa_open_prompt_tess,sr=None)
                             sd.play(data = d, samplerate= f,device = "Speakers (USB Audio), Windows DirectSound")
@@ -287,8 +296,7 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
                             make_threads(name= audio_name,tone_path=os.path.join(import_directory_tones,combo[2]), tess_path=os.path.join(fixed_tess_path,actor,combo[0]), usb_ep=usb_mic_export_path)
                         except:
                             print("file: "+audio_file+" couldnt be played.")
-                            break
-                        time.sleep(40)
+                        time.sleep(55)
                         try:
                             code,transcript = experiment_scrape(name = audio_name,scrape_type="TESS")
                             if (code == 225):
@@ -324,51 +332,51 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
                                 pass
                             continue
                         
-                    ### IF FIRST RECORD METHOD FAILS FOR SOME REASON
-                    elif(i >= 5):
-                        try:
-                            d,f = librosa.load(alexa_open_prompt_tones)
-                            sd.play(data = d, samplerate= f,device = "Speakers (USB Audio), Windows DirectSound")
-                            sd.wait()
-                            make_threads(name= audio_name,tone_path=os.path.join(import_directory_tones,combo[2]), tess_path=os.path.join(fixed_tess_path,actor,combo[0]),usb_ep=usb_mic_export_path)
-                        except:
-                            print("file: "+audio_file+" couldnt be played.")
-                            break
-                        time.sleep(40)
-                        try:
-                            code,transcript =  experiment_scrape(name = audio_name,scrape_type="index")
-                            if (code == 225):
-                                i = i+1
-                                continue
-                            elif (code == 10):
-                                try:
-                                    os.rename(os.path.join(alexa_record_path,(audio_name+".wav")),os.path.join(alexa_export_path,(audio_name+".wav")))
-                                except:
-                                    pass
-                                try:
-                                    recoding_audio = sf.SoundFile(os.path.join(alexa_export_path,audio_name+".wav"))
-                                except:
-                                    i = i+1
-                                    os.remove(os.path.join(alexa_export_path,audio_name+".wav"))
-                                    os.remove(os.path.join(usb_mic_export_path,audio_name+".wav"))
-                                    continue
-                                if recoding_audio.samplerate > 0:
-                                    length_of_recorder = recoding_audio.frames/recoding_audio.samplerate
-                                else:
-                                    length_of_recorder = 0
-                                recoding_audio.close()
-                                if (4.035 - length_of_recorder) > 0 or (4-length_of_recorder) < -2:
-                                    os.remove(os.path.join(alexa_export_path,audio_name+".wav"))
-                                    os.remove(os.path.join(usb_mic_export_path,audio_name+".wav"))
-                                    i = i+1
-                                    continue
-                                break
-                        except:
-                            print("scraper didnt return 225 exception line 41")
-                            i=i+1
-                            try:
-                                os.remove(os.path.join(alexa_export_path,audio_name+".wav"))
-                                os.remove(os.path.join(usb_mic_export_path,audio_name+".wav"))
-                            except:
-                                pass
-                            continue
+                    # ### IF FIRST RECORD METHOD FAILS FOR SOME REASON
+                    # elif(i >= 5):
+                    #     try:
+                    #         d,f = librosa.load(alexa_open_prompt_tones)
+                    #         sd.play(data = d, samplerate= f,device = "Speakers (USB Audio), Windows DirectSound")
+                    #         sd.wait()
+                    #         make_threads(name= audio_name,tone_path=os.path.join(import_directory_tones,combo[2]), tess_path=os.path.join(fixed_tess_path,actor,combo[0]),usb_ep=usb_mic_export_path)
+                    #     except:
+                    #         print("file: "+audio_file+" couldnt be played.")
+                    #         break
+                    #     time.sleep(40)
+                    #     try:
+                    #         code,transcript =  experiment_scrape(name = audio_name,scrape_type="index")
+                    #         if (code == 225):
+                    #             i = i+1
+                    #             continue
+                    #         elif (code == 10):
+                    #             try:
+                    #                 os.rename(os.path.join(alexa_record_path,(audio_name+".wav")),os.path.join(alexa_export_path,(audio_name+".wav")))
+                    #             except:
+                    #                 pass
+                    #             try:
+                    #                 recoding_audio = sf.SoundFile(os.path.join(alexa_export_path,audio_name+".wav"))
+                    #             except:
+                    #                 i = i+1
+                    #                 os.remove(os.path.join(alexa_export_path,audio_name+".wav"))
+                    #                 os.remove(os.path.join(usb_mic_export_path,audio_name+".wav"))
+                    #                 continue
+                    #             if recoding_audio.samplerate > 0:
+                    #                 length_of_recorder = recoding_audio.frames/recoding_audio.samplerate
+                    #             else:
+                    #                 length_of_recorder = 0
+                    #             recoding_audio.close()
+                    #             if (4.035 - length_of_recorder) > 0 or (4-length_of_recorder) < -2:
+                    #                 os.remove(os.path.join(alexa_export_path,audio_name+".wav"))
+                    #                 os.remove(os.path.join(usb_mic_export_path,audio_name+".wav"))
+                    #                 i = i+1
+                    #                 continue
+                    #             break
+                    #     except:
+                    #         print("scraper didnt return 225 exception line 41")
+                    #         i=i+1
+                    #         try:
+                    #             os.remove(os.path.join(alexa_export_path,audio_name+".wav"))
+                    #             os.remove(os.path.join(usb_mic_export_path,audio_name+".wav"))
+                    #         except:
+                    #             pass
+                    #         continue

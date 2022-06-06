@@ -342,19 +342,26 @@
 from experiment_record import experiment_record
 import time
 import os
-time.sleep(20)
+
+
+
+#trial3_trial2_ae_MSE-FFT_individual_14_655_003-001-005-001-159-001-028
+# time.sleep(20)
 
 trial_1_tess = "C:\\Users\\avery\\OneDrive\\Documents\\trial1"
 trial_2_tess = "C:\\Users\\avery\\OneDrive\\Documents\\trial2"
 trial_3_tess = "C:\\Users\\avery\\OneDrive\\Documents\\trial3"
 #export_path1 = "C:\\Users\\avery\\OneDrive\\Documents\\trial_1_eval_different_distances\\2feet"
 #export_path2 = "C:\\Users\\avery\\OneDrive\\Documents\\trial_1_eval_different_distances\\3feet"
-export_path = "C:\\Users\\avery\\OneDrive\\Documents\\trial_3_eval\\1feet"
+export_path = "C:\\Users\\avery\\OneDrive\\Documents\\echo_dot_evals\\1feet"
 tess_imports = dict()
 
-AAPS_to_test = [("655","trial2_ae_MSE-FFT_individual_14.wav",3)]
-#AAP_path = "C:\\Users\\avery\\OneDrive\\Documents\\avery_new_ae"
-AAP_path = "C:\\Users\\avery\\OneDrive\\Documents\\trial3_aaps"
+## Trial 1 AAP  655 trial_0_individual_13_ae_MSE-FFT
+## Trial 2 AAP  655 trial_1_individual_15_ae_MSE-FFT
+## Trial 3 AAP  655 trial2_ae_MSE-FFT_individual_14.wav
+AAPS_to_test = [("655","trial2_ae_MSE-FFT_individual_14.wav",3),("655","trial_1_individual_15_ae_MSE-FFT.wav",2),("655","trial_0_individual_13_ae_MSE-FFT.wav",1)]
+AAP_path = "C:\\Users\\avery\\OneDrive\\Documents\\avery_new_ae"
+#AAP_path = "C:\\Users\\avery\\OneDrive\\Documents\\trial3_aaps"
 tess_imports["trial1"] = trial_1_tess
 tess_imports["trial2"] = trial_2_tess
 tess_imports["trial3"] = trial_3_tess

@@ -83,7 +83,7 @@ def experiment_scrape(scrape_type = None,name = "", index = 0):
             try:
                 ## Look for a transcript that begins with a word that is similar to the start of the TESS files (also the RAVDESS set)
                 transcript = box.find_element_by_class_name("record-summary-preview.customer-transcript").text
-                if transcript.startswith('"say') or transcript.startswith('"kids') or transcript.startswith('"dogs') or transcript.startswith('"see') or transcript.startswith('"saw') or transcript.startswith('"sew') or transcript.startswith('"so') or transcript.startswith('"seen') or transcript.startswith('"seek'):
+                if transcript.startswith('"say') or transcript.startswith('"kids') or transcript.startswith('"dogs') or transcript.startswith('"see') or transcript.startswith('"saw') or transcript.startswith('"sew') or transcript.startswith('"seen') or transcript.startswith('"seek') or transcript.startswith('"save') or transcript.startswith('"savior') or transcript.startswith('"sap') or transcript.startswith('"sav') or transcript.startswith('"sa') or transcript.startswith('"sow') or (transcript.startswith('"so') and not transcript.startswith('"sorry')):
                     trans_out = transcript[1:-1]
                     expandButton = box.find_element_by_class_name("apd-expand-toggle-button.button-clear")
                     expandButton.click()
