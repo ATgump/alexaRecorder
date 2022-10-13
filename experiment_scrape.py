@@ -48,18 +48,24 @@ def delAudio(drive):
     # index: not working yet, will update index scraper to work for any index (may need to add seperate tones scraper because the index could be either 1 or 0)
 def experiment_scrape(scrape_type = None,name = "", index = 0):
     ## Scrape for TESS file
+    what = ""
     if scrape_type == "TESS":
         try:
             ## Setup chrome-driver settings and open alexa history page
             transcript = "audio not found"
             service_object = Service(binary_path)
+            what="1"
             option = webdriver.ChromeOptions()
+            what="2"
             capabilities = DesiredCapabilities.CHROME
+            what="3"
             capabilities["goog:loggingPrefs"] = {"performance": "ALL"}
             option.add_argument("user-data-dir=C:\\Users\\avery\\AppData\\Local\\Google\\Chrome\\User Data")
             option.add_argument("profile-directory=Profile 1")
             option.add_experimental_option("detach",True)
+            what = "4"
             driver = webdriver.Chrome(service=service_object,options=option,desired_capabilities=capabilities)
+            what="5"
             time.sleep(2)
             driver.get("https://www.amazon.com/alexa-privacy/apd/rvh?")
             time.sleep(8)
@@ -70,6 +76,7 @@ def experiment_scrape(scrape_type = None,name = "", index = 0):
             boxes = driver.find_elements_by_class_name("apd-content-box")
         except:
             print("driver failed to load history or content box not found")
+            print(what)
             try:
                 driver.quit()
             except:
@@ -83,7 +90,7 @@ def experiment_scrape(scrape_type = None,name = "", index = 0):
             try:
                 ## Look for a transcript that begins with a word that is similar to the start of the TESS files (also the RAVDESS set)
                 transcript = box.find_element_by_class_name("record-summary-preview.customer-transcript").text
-                if transcript.startswith('"say') or transcript.startswith('"kids') or transcript.startswith('"dogs') or transcript.startswith('"see') or transcript.startswith('"saw') or transcript.startswith('"sew') or transcript.startswith('"seen') or transcript.startswith('"seek') or transcript.startswith('"save') or transcript.startswith('"savior') or transcript.startswith('"sap') or transcript.startswith('"sav') or transcript.startswith('"sa') or transcript.startswith('"sow') or (transcript.startswith('"so') and not transcript.startswith('"sorry')):
+                if transcript.startswith('"say') or transcript.startswith('"kids') or transcript.startswith('"dogs') or transcript.startswith('"see') or transcript.startswith('"saw') or transcript.startswith('"sew') or transcript.startswith('"seen') or transcript.startswith('"seek') or transcript.startswith('"save') or transcript.startswith('"savior') or transcript.startswith('"sap') or transcript.startswith('"sav') or transcript.startswith('"sa') or transcript.startswith('"sow') or (transcript.startswith('"so') and not transcript.startswith('"sorry')) or transcript.startswith('"play') or transcript.startswith('"hay') or transcript.startswith('"day') or transcript.startswith('"way') or transcript.startswith('"stay') or transcript.startswith('"may') or transcript.startswith('"gay') or transcript.startswith('"lay') or transcript.startswith('"ray') or transcript.startswith('"neigh') or transcript.startswith('"way') or transcript.startswith('"fae'):
                     trans_out = transcript[1:-1]
                     expandButton = box.find_element_by_class_name("apd-expand-toggle-button.button-clear")
                     expandButton.click()

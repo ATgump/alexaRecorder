@@ -1,0 +1,37 @@
+with sr.Microphone() as src:
+    rec = sr.Recognizer()
+    rec.adjust_for_ambient_noise(src)
+    while True:
+        scrape_now = False
+        audio = rec.listen(src)
+        audio_name = "trial"+str(combo[3])+"_"+combo[2][:-4]+"_"+combo[1]+"_"+audio_file[:-4]
+        if(i == 3):
+            missed_files = missed_files+1
+            if missed_files == 5:
+                sys.exit("Too many files missed reset the echo")
+            break
+
+        if(i<3):
+            if method == "eval_record_alexa":
+                d,f = librosa.load(alexa_open_prompt_tess_alexa,sr=None)
+            elif method == "eval_record_dot":
+                d,f = librosa.load(alexa_open_prompt_tess_dot,sr=None)
+            os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume 8000")	
+            sd.play(data = d, samplerate= f,device = "Headphones (Baby Boom XL), Windows DirectSound")
+            
+            #sd.play(data = d, samplerate= f,device = "Speakers (USB Audio), Windows DirectSound")
+            sd.wait()
+            #os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume 655")
+            try:
+                #now = time.time()
+                text = rec.recognize_sphinx(audio)
+                if text == 'Echo': #not re.match(prompt_regexp, text) is not None:
+                    #print(time.time()-now)
+                    scrape_now = True
+                    make_threads(name= audio_name,tone_path=os.path.join(import_directory_tones,combo[2]), tess_path=os.path.join(fixed_tess_path,actor,combo[0]), usb_ep=usb_mic_export_path)
+                else:
+                    print(f"Ooops. Heard '{text}'")
+                    continue
+            except sr.UnknownValueError:
+                print("Waiting...")
+                continue

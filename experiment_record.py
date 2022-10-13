@@ -8,45 +8,103 @@ import librosa
 import sounddevice as sd
 from scipy.io.wavfile import write
 import threading
+import math
 
 fixed_tess_path = "C:\\Users\\avery\\OneDrive\\Documents\\fixed_tess\\fixed_tess" ## For recording the trials, in case the tess is the rerecorded version
-alexa_open_prompt_tones = "C:\\Users\\avery\\OneDrive\\Desktop\\echo_open_tones.wav"
-alexa_open_prompt_tess = "C:\\Users\\avery\\OneDrive\\Desktop\\echoOpen.wav"
+alexa_open_prompt_tones = "C:\\Users\\avery\\OneDrive\\Desktop\\random_alexa_recordings\\echo_open_tones.wav"
+alexa_open_prompt_tess_alexa = "C:\\Users\\avery\\OneDrive\\Desktop\\random_alexa_recordings\\echoOpen.wav"
+alexa_open_prompt_tess_dot = "C:\\Users\\avery\\OneDrive\\Desktop\\random_alexa_recordings\\echoOpen_no_skill.wav"
 #devices = [('"Speakers"',"2"),('"Headphones"',"0")] ### 0 - USB, 1- Bluetooth
 alexa_record_path = "C:\\Users\\avery\\OneDrive\\Documents\\alexa_recording_fixed"
 
 
 ## Prep the data_set for USB recordings (pad and create the dictionary to use for splitting after recording)
 # merge is true if it is a TESS file and has two actor folders
-def data_set_prep(import_path,export_path,name,merge = False):
-    if merge == True:
+def data_set_prep(import_path,export_path,name,merge = False,DB_expir = False):
+    AAP_keys = dict()
+    AAP_files = []
+    emotions = []
+    num_of_AAPS = 0
+    # if DB_expir:
+    #     emotion_groups = os.listdir(import_path)
+    #     for emotion_group in emotion_groups:
+    #         tess_keys = dict()
+    #         for file in os.listdir(os.path.join(import_path,emotion_group)):
+    #             tess_keys[file] = os.path.join(import_path,emotion_group,file)
+    #         emotions.append((emotion_group,tess_keys))
+    if merge:
         actors = os.listdir(import_path)
         for actor in actors:
-            AAP_files += os.listdir(os.path.join(import_path,actor))
+            AAP_files.append((actor,os.listdir(os.path.join(import_path,actor))))
+            num_of_AAPS += len(os.listdir(os.path.join(import_path,actor)))
+        for tup in AAP_files:
+            for file in tup[1]:
+                AAP_keys[file] = os.path.join(import_path,tup[0],file)
     else:
         AAP_files = os.listdir(import_path)
-    AAP_keys = dict()
-    for file in AAP_files:
-        AAP_keys[file] = os.path.join(import_path,file)
+        num_of_AAPS = len(AAP_files)
+        for file in AAP_files:
+            AAP_keys[file] = os.path.join(import_path,file)
 
-    # (10s pad up front + (4s audio + 1s pad) * <audio file count>) * 10000 Hz sample rate 
+    # (10s pad up front + (4s audio + 1s pad) * <audio file count>) * 10000 Hz sample rate
+    #print(AAP_keys["003-001-001-001-003-001-026.wav"])
+    if merge:
+        ### CHANGED FOR TESS ONLY
+        total_seconds = 0
+        audio_file_play_list = ""
+        try:
+            os.mkdir(os.path.join(export_path,"padded_long"))
+        except:
+            pass
+        total_length = 0
+        #print(len(AAP_keys.keys()))
+        
+        for audio_key in sorted(AAP_keys.keys()):
+            x,f = librosa.load(AAP_keys[audio_key],sr=24414)
+            total_length += len(x)
+            total_seconds += librosa.get_duration(y=x,sr=f)
+        if DB_expir:
+            big_wav_data = np.zeros(total_length)
+            indx = 0
+        else:
+            big_wav_data = np.zeros(24414*(10 + math.ceil(total_seconds)))
+            indx = 24414*10
+        k = 1
+        for audio_key in sorted(AAP_keys.keys()):
+            x, f = librosa.load(AAP_keys[audio_key], sr=24414)
+            length = len(x)
+            # print(length)
+            # print(24414*math.ceil(librosa.get_duration(y=x,sr=f)))
+            audio_file_play_list += f"{k}: {audio_key}"
+            k += 1
+            # print(type(indx))
+            # print(type(length))
+            big_wav_data[indx:indx+length] = x
+            indx+=length
+            # indx += 24414*(math.ceil(librosa.get_duration(y=x,sr=f)))
+        ep = os.path.join(export_path,"padded_long",name)
+        print(total_seconds/60)
+        #sf.write(ep,big_wav_data,24414)
+        #print(sorted(AAP_keys.keys()))
+        return AAP_keys
+    else:
+        num_of_AAPS = len(AAP_files)
+        big_wav_data = np.zeros(10000*(10 + (5 * num_of_AAPS)))
+        indx = 100000
+        for audio_key in sorted(AAP_keys.keys()):
+            x, _ = librosa.load(AAP_keys[audio_key], duration=4, sr=10000)
+            length = len(x)
+            big_wav_data[indx:indx+length] = x
+            indx += 50000
+        try:
+            os.mkdir(os.path.join(export_path,"padded_long"))
+        except:
+            pass
+        ep = os.path.join(export_path,"padded_long",name)
 
-    num_of_AAPS = len(AAP_files)
-    big_wav_data = np.zeros(10000*(10 + (5 * num_of_AAPS)))
-    indx = 100000
-
-    for audio_key in sorted(AAP_keys.keys()):
-        x, _ = librosa.load(AAP_keys[audio_key], duration=4, sr=10000)
-        length = len(x)
-        big_wav_data[indx:indx+length] = x
-        indx += 50000
-    try:
-        os.mkdir(os.path.join(export_path,"padded_long"))
-    except:
-        pass
-    ep = os.path.join(export_path,"padded_long",name)    
-    sf.write(ep, big_wav_data, 10000)
-    return AAP_keys
+    
+        sf.write(ep, big_wav_data, 10000)
+        return AAP_keys
 
 ## Function to use for threading (plays or records a file, recording done from USB mic)
 def play_audio(data,samplerate,device,rec,dur,name,usb_ep):
@@ -100,7 +158,7 @@ def create_volume_sets(tess_import,export_path,AAPS):
 
 
 
-def experiment_record(method,file_list,import_directory_TESS,import_directory_tones,export_directory):
+def experiment_record(method,file_list,import_directory_TESS,import_directory_tones,export_directory,dbTestName=""):
     ## Recording tones from Alexa (no markers added, use find marker if it is the case that markers were added)
     ## file list: (tone_files[], volume[]) record all tone files at every volume
     ## method: "alexa_record_tones"
@@ -161,7 +219,7 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
             os.makedirs(export_directory,"transcripts")
         except:
             pass
-        os.system('C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume '+file_list[1]+' "Baby Boom XL\\Subunit\\Volume"')
+        #os.system('C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume '+file_list[1]+' "Baby Boom XL\\Subunit\\Volume"')
         for audio_file in file_list[0]:
             i = 0
             actor = audio_file[-7:-4]
@@ -171,7 +229,7 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
                     if (i == 10):
                         break
                     try:
-                        d,f = librosa.load(alexa_open_prompt_tess,sr=None)
+                        d,f = librosa.load(alexa_open_prompt_tess_alexa,sr=None)
                         sd.play(data = d, samplerate= f,device = "Headphones (Baby Boom XL), Windows DirectSound")
                         sd.wait()
                         d2,f2 = librosa.load(os.path.join(import_directory_TESS,actor,audio_file))
@@ -208,14 +266,39 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
                         i=i+1
                         continue
     
+
+    elif method == "USB_record_DB":
+        n = "DB_test_no_pads_TESS.wav"
+        #file_list = data_set_prep(import_directory_TESS,export_directory,n,DB_expir=True,merge=True)
+        # print(export_directory)
+        # print(type(export_directory))
+        try:
+            os.mkdir(os.path.join(export_directory,"long_records"))
+        except:
+            pass
+        long_tess,fs = librosa.load(os.path.join(export_directory,"padded_long",n), sr=24414)
+        ## CHANGE AUDIO MANUALLY FOR MNOW
+        ## CHANGE THIS TO CHANGE VOLUME FOR THE RIGHT DEVICE
+        #os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume)
+        sd.default.device = ("Microphone (USB audio CODEC), Windows DirectSound","Headphones (Baby Boom XL), Windows DirectSound")
+        myrecording = sd.playrec(long_tess, samplerate=fs, channels=1)
+        sd.wait()  # Wait until recording is finished
+        p = os.path.join(export_directory,"long_records",dbTestName)
+        write(p, fs, myrecording)  # Save as WAV file
+        # with open(os.path.join(export_directory,"long_records","tess_play_order.txt"),"w") as f:
+        #     f.write(file_list)
+
+
     ## Recording from the USB mic    
-    elif method == "USB_record_TESS" or method == "USB_record_tones":
-        time.sleep(30)
-        n = method+"_padded_long"
+    elif method == "USB_record_TESS" or method == "USB_record_tones" or method == "USB_record_PADDED":
+        n = method+"_padded_long.wav"
         if method == "USB_record_TESS":
+            #AAP_k = data_set_prep(import_directory_TESS, export_directory,n,DB_expir=True)
             AAP_k = data_set_prep(import_directory_TESS, export_directory,n,merge=True)
-        else:
+        elif method == "USB_record_tones":
             AAP_k = data_set_prep(import_directory_tones, export_directory,n)
+        elif method == "USB_record_PADDED":
+            AAP_k = []
         long_aap,fs = librosa.load(os.path.join(export_directory,"padded_long",n), sr=10000)
         try:
             os.mkdir(export_directory,"long_records")
@@ -223,7 +306,7 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
             pass
         for volume in file_list:
             ## CHANGE THIS TO CHANGE VOLUME FOR THE RIGHT DEVICE
-            os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume+' "Speakers" '+"2")
+            os.system("C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume "+volume)
             if method == "USB_record_tones":
                 sd.default.device = ("Microphone (USB audio CODEC), Windows DirectSound","Speakers (USB Audio), Windows DirectSound")
             else:
@@ -231,11 +314,12 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
             myrecording = sd.playrec(long_aap, samplerate=fs, channels=1)
             sd.wait()  # Wait until recording is finished
             p = os.path.join(export_directory,"long_records",(volume+"_padded_long.wav"))
-            write(p, fs, myrecording)  # Save as WAV file
-            try: 
-                os.mkdir(export_directory,"individual_AAPS",volume)
+            try:
+                os.makedirs(os.path.join(export_directory,"long_records"))
             except:
                 pass
+            write(p, fs, myrecording)  # Save as WAV file
+
 
         # Split the files
         for AAPS in os.listdir(os.path.join(export_directory,"long_records")):
@@ -254,7 +338,7 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
 ## File list is a list of tuples in this case [(volume,tone,trial)]
 ## import_directory_tess is multiple tess directories for different trials dicts d["trial1"] = trial 1 import directory
 
-    elif method == "eval_record":
+    elif method == "eval_record_alexa" or method == "eval_record_dot":
         #os.system('C:\\Users\\avery\\Downloads\\nircmd\\nircmd.exe setsysvolume 64226 "Baby Boom XL\\Subunit\\Volume"')
         for trial in file_list:
             trial_num = "trial"+str(trial[2])
@@ -290,7 +374,10 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
                     ## TRY THIS METHOD FIRST (BETTER TRIM ON FILES)
                     if(i<3):
                         try:
-                            d,f = librosa.load(alexa_open_prompt_tess,sr=None)
+                            if method == "eval_record_alexa":
+                                d,f = librosa.load(alexa_open_prompt_tess_alexa,sr=None)
+                            elif method == "eval_record_dot":
+                                d,f = librosa.load(alexa_open_prompt_tess_dot,sr=None)
                             sd.play(data = d, samplerate= f,device = "Speakers (USB Audio), Windows DirectSound")
                             sd.wait()
                             make_threads(name= audio_name,tone_path=os.path.join(import_directory_tones,combo[2]), tess_path=os.path.join(fixed_tess_path,actor,combo[0]), usb_ep=usb_mic_export_path)
@@ -333,7 +420,7 @@ def experiment_record(method,file_list,import_directory_TESS,import_directory_to
                             continue
                         
                     # ### IF FIRST RECORD METHOD FAILS FOR SOME REASON
-                    # elif(i >= 5):
+                    # elif(i < 3):
                     #     try:
                     #         d,f = librosa.load(alexa_open_prompt_tones)
                     #         sd.play(data = d, samplerate= f,device = "Speakers (USB Audio), Windows DirectSound")
